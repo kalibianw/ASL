@@ -1,3 +1,5 @@
+import torch
+
 from utils import config, CustomImageDataset, CustomImageDatasetLoadAllIntoMemory, Model, Visualization
 
 from torch.utils.data import DataLoader
@@ -23,8 +25,10 @@ def main():
     model = Model(cfg=cfg)
     heatmaps_tensor = model.render_gaussian_heatmap(joint_coords=y_lndmrk[0])
 
+    stacked_heatmaps = torch.stack(heatmaps_tensor)
+
     vis = Visualization(cfg=cfg)
-    vis.multi_heatmap_visualization(heatmaps_tensor=heatmaps_tensor)
+    vis.multi_heatmap_visualization(heatmaps_tensor=stacked_heatmaps)
 
     plt.imshow(x[0][0].cpu().numpy())
     plt.show()

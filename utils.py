@@ -172,4 +172,4 @@ class Model(nn.Module):
             heatmap = heatmap * 255
             heatmaps.append(heatmap)
 
-        return torch.stack(heatmaps)
+        return heatmaps
