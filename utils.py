@@ -64,10 +64,10 @@ class CustomImageDataset(Dataset):
             for anno_name in os.listdir(os.path.join(dir_path, "annotation")):
                 label_file_path = os.path.join(anno_dir_path, anno_name)
                 self.total_label_file_paths.append(label_file_path)
-
-    def __len__(self):
         if len(self.total_img_file_paths) != len(self.total_label_file_paths):
             raise NumberOfFileNotSame()
+
+    def __len__(self):
         return len(self.total_img_file_paths)
 
     def __getitem__(self, idx):
@@ -108,7 +108,6 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             for anno_name in os.listdir(os.path.join(dir_path, "annotation")):
                 label_file_path = os.path.join(anno_dir_path, anno_name)
                 total_label_file_paths.append(label_file_path)
-
         if len(total_img_file_paths) != len(total_label_file_paths):
             raise NumberOfFileNotSame
 
