@@ -1,6 +1,6 @@
 import torch
 
-from utils import config, CustomImageDataset, CustomImageDatasetLoadAllIntoMemory, Model, Visualization
+from utils import Config, CustomImageDataset, CustomImageDatasetLoadAllIntoMemory, Model, Visualization
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 def main():
-    cfg = config()
+    cfg = Config()
 
     transform = nn.Sequential(
         transforms.Resize(cfg.output_hm_shape)

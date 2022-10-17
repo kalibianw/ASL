@@ -11,7 +11,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 
-class config:
+class Config:
     dataset_root_path = "D:/AI/data/ASL Alphabet Synthetic/dataset/"
     output_hm_shape = (256, 256)  # (height, width)
     sigma = 2.5
@@ -23,7 +23,7 @@ class NumberOfFileNotSame(Exception):
 
 
 class Visualization:
-    def __init__(self, cfg: config):
+    def __init__(self, cfg: Config):
         self.cfg = cfg
 
     def single_heatmap_visualization(self, heatmap_tensor):
@@ -43,7 +43,7 @@ class Visualization:
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, cfg: config, transform=None):
+    def __init__(self, cfg: Config, transform=None):
         self.transform = transform
 
         self.cfg = cfg
@@ -89,7 +89,7 @@ class CustomImageDataset(Dataset):
 
 
 class CustomImageDatasetLoadAllIntoMemory(Dataset):
-    def __init__(self, cfg: config, transform=None):
+    def __init__(self, cfg: Config, transform=None):
         self.cfg = cfg
 
         total_img_file_paths = list()
@@ -152,7 +152,10 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
 
 
 class Model(nn.Module):
-    def __init__(self, cfg: config):
+    def __init__(self, cfg: Config, resnet_type: int):
+        """
+        :param resnet_type: 18, 34, 50, 101, 152
+        """
         super(Model, self).__init__()
         self.cfg = cfg
 
