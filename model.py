@@ -1,10 +1,12 @@
 from utils import Config
+from layer import *
 
 from torchvision.models.resnet import BasicBlock, Bottleneck
 from torchvision.models.resnet import model_urls
 from torch.utils import model_zoo
 import torch
 import torch.nn as nn
+import torch.nn.functional as nnf
 
 
 class ResNetBackbone(nn.Module):
@@ -77,6 +79,25 @@ class ResNetBackbone(nn.Module):
         print("Initialize resnet from model zoo")
 
 
+class PoseNet(nn.Module):
+    def __init__(self, cfg: Config):
+        super(PoseNet, self).__init__()
+
+        self.joint_deconv1 = make_deconv_layers([512, 256, 256, 128, 128, 64])
+        self.joint_conv1 = make_conv_layers([64, cfg.joint_num], kernel=1, stride=1, padding=0, bnrelu_final=False)
+
+        self.fc = make_linear_layers([512 * 8 * 8, 24], relu_final=False)
+
+    def forward(self, img_feat):
+        joint_img_feat_1 = self.joint_deconv1(img_feat)
+        joint_heatmap_1 = self.joint_conv1(joint_img_feat_1)
+
+        flatten_feat = torch.flatten(img_feat, start_dim=1)
+        class_out = nnf.log_softmax(self.fc(flatten_feat), dim=1)
+
+        return joint_heatmap_1, class_out
+
+
 class Model(nn.Module):
     def __init__(self, cfg: Config, resnet_type: int):
         """
@@ -86,7 +107,7 @@ class Model(nn.Module):
         self.cfg = cfg
 
         self.backbone_net = ResNetBackbone(resnet_type)
-        # self.posenet = PoseNet()
+        self.posenet = PoseNet(self.cfg)
 
     def render_gaussian_heatmap(self, joint_coords: torch.Tensor):
         heatmaps = list()
@@ -105,3 +126,9 @@ class Model(nn.Module):
             heatmaps.append(heatmap)
 
         return heatmaps
+
+    def forward(self, x):
+        img_feat = self.backbone_net(x)
+        heatmaps, class_out = self.posenet(img_feat)
+
+        return heatmaps, class_out

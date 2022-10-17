@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 class Config:
     dataset_root_path = "D:/AI/data/ASL Alphabet Synthetic/dataset/"
     output_hm_shape = (256, 256)  # (height, width)
+    joint_num = 26
     sigma = 2.5
 
 

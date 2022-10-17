@@ -24,7 +24,7 @@ def main():
 
     x, y_label, y_lndmrk = next(iter(loader))
 
-    model = Model(cfg=cfg)
+    model = Model(cfg=cfg, resnet_type=18)
     heatmaps_tensor = model.render_gaussian_heatmap(joint_coords=y_lndmrk[0])
 
     stacked_heatmaps = torch.stack(heatmaps_tensor)
