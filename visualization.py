@@ -1,6 +1,8 @@
 import torch
 
-from utils import Config, CustomImageDataset, CustomImageDatasetLoadAllIntoMemory, Model, Visualization
+from utils import Config, Visualization
+from model import Model
+from dataset import CustomImageDataset, CustomImageDatasetLoadAllIntoMemory
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
