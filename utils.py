@@ -1,3 +1,5 @@
+import torch
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -26,3 +28,15 @@ class Visualization:
 
         plt.imshow(heatmap)
         plt.show()
+
+
+def export_model(model, dsize, device, export_name="model.onnx"):
+    dummy_data = torch.empty(
+        size=dsize,
+        device=device
+    )
+    torch.onnx.export(
+        model,
+        dummy_data,
+        export_name
+    )
