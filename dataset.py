@@ -16,8 +16,8 @@ class NumberOfFileNotSame(Exception):
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, cfg: Config, transform=None):
-        self.transform = transform
+    def __init__(self, cfg: Config, resize_transform=None):
+        self.resize_transform = resize_transform
 
         self.cfg = cfg
 
@@ -51,8 +51,8 @@ class CustomImageDataset(Dataset):
         y_label = torch.Tensor([self.dir_names.index(df["Letter"][0])])
         y_lndmrk = torch.Tensor(df["Landmarks"])
 
-        if self.transform is not None:
-            x = self.transform(x)
+        if self.resize_transform is not None:
+            x = self.resize_transform(x)
             new_lndmrk_x_coord = y_lndmrk[:, 0] / org_img_size[1] * self.cfg.output_hm_shape[1]
             new_lndmrk_y_coord = y_lndmrk[:, 1] / org_img_size[0] * self.cfg.output_hm_shape[0]
             y_lndmrk = torch.stack((new_lndmrk_x_coord, new_lndmrk_y_coord), dim=1)
@@ -62,7 +62,7 @@ class CustomImageDataset(Dataset):
 
 
 class CustomImageDatasetLoadAllIntoMemory(Dataset):
-    def __init__(self, cfg: Config, transform=None):
+    def __init__(self, cfg: Config, resize_transform=None):
         self.cfg = cfg
 
         total_img_file_paths = list()
@@ -101,8 +101,8 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             y_label = torch.Tensor([self.dir_names.index(df["Letter"][0])])
             y_lndmrk = torch.Tensor(df["Landmarks"])
 
-            if transform is not None:
-                img = transform(img)
+            if resize_transform is not None:
+                img = resize_transform(img)
                 new_lndmrk_x_coord = y_lndmrk[:, 0] / org_img_size[1] * self.cfg.output_hm_shape[1]
                 new_lndmrk_y_coord = y_lndmrk[:, 1] / org_img_size[0] * self.cfg.output_hm_shape[0]
                 y_lndmrk = torch.stack((new_lndmrk_x_coord, new_lndmrk_y_coord), dim=1)

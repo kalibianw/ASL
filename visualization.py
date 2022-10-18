@@ -14,11 +14,11 @@ import matplotlib.pyplot as plt
 def main():
     cfg = Config()
 
-    transform = nn.Sequential(
+    resize_transform = nn.Sequential(
         transforms.Resize(cfg.output_hm_shape)
     )
 
-    cid = CustomImageDataset(cfg=cfg, transform=transform)
+    cid = CustomImageDataset(cfg=cfg, resize_transform=resize_transform)
 
     loader = DataLoader(cid, batch_size=1, shuffle=True)
 
