@@ -83,10 +83,16 @@ class PoseNet(nn.Module):
     def __init__(self, cfg: Config):
         super(PoseNet, self).__init__()
 
-        self.joint_deconv1 = make_deconv_layers([512, 256, 256, 128, 128, 64])
-        self.joint_conv1 = make_conv_layers([64, cfg.joint_num], kernel=1, stride=1, padding=0, bnrelu_final=False)
+        if cfg.resnet_type < 50:
+            self.joint_deconv1 = make_deconv_layers([512, 256, 256, 128, 128, 64])
+            self.joint_conv1 = make_conv_layers([64, cfg.joint_num], kernel=1, stride=1, padding=0, bnrelu_final=False)
 
-        self.fc = make_linear_layers([512 * 8 * 8, 24], relu_final=False)
+            self.fc = make_linear_layers([512 * 8 * 8, 24], relu_final=False)
+        else:
+            self.joint_deconv1 = make_deconv_layers([2048, 512, 512, 256, 256, 128])
+            self.joint_conv1 = make_conv_layers([128, cfg.joint_num], kernel=1, stride=1, padding=0, bnrelu_final=False)
+
+            self.fc = make_linear_layers([2048 * 8 * 8, 24], relu_final=False)
 
     def forward(self, img_feat):
         joint_img_feat_1 = self.joint_deconv1(img_feat)
@@ -99,14 +105,11 @@ class PoseNet(nn.Module):
 
 
 class Model(nn.Module):
-    def __init__(self, cfg: Config, resnet_type: int):
-        """
-        :param resnet_type: 18, 34, 50, 101, 152
-        """
+    def __init__(self, cfg: Config):
         super(Model, self).__init__()
         self.cfg = cfg
 
-        self.backbone_net = ResNetBackbone(resnet_type)
+        self.backbone_net = ResNetBackbone(self.cfg.resnet_type)
         self.posenet = PoseNet(self.cfg)
 
     def render_gaussian_heatmap(self, joint_coords: torch.Tensor):

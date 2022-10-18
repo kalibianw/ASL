@@ -9,6 +9,7 @@ class Config:
     output_hm_shape = (256, 256)  # (height, width)
     joint_num = 26
     sigma = 2.5
+    resnet_type = 18    # 18, 34, 50, 101, 152
 
 
 class Visualization:
