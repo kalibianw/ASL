@@ -2,8 +2,6 @@ from utils import Config
 
 from torch.utils.data import Dataset
 from torchvision.io import read_image
-import pandas as pd
-import os
 
 import torch
 
@@ -16,28 +14,15 @@ class NumberOfFileNotSame(Exception):
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, cfg: Config, resize_transform=None):
+    def __init__(self, cfg: Config, img_file_paths, labels, lndmrks, resize_transform=None):
         self.resize_transform = resize_transform
 
         self.cfg = cfg
 
-        self.total_img_file_paths = list()
-        self.total_label_file_paths = list()
-        self.dir_names = list()
-        for dir_name in os.listdir(self.cfg.dataset_root_path):
-            self.dir_names.append(dir_name)
-            dir_path = os.path.join(self.cfg.dataset_root_path, dir_name)
-            img_dir_path = os.path.join(dir_path, "lit")
-            anno_dir_path = os.path.join(dir_path, "annotation")
-
-            for img_name in os.listdir(os.path.join(dir_path, "lit")):
-                img_file_path = os.path.join(img_dir_path, img_name)
-                self.total_img_file_paths.append(img_file_path)
-
-            for anno_name in os.listdir(os.path.join(dir_path, "annotation")):
-                label_file_path = os.path.join(anno_dir_path, anno_name)
-                self.total_label_file_paths.append(label_file_path)
-        if len(self.total_img_file_paths) != len(self.total_label_file_paths):
+        self.total_img_file_paths = img_file_paths
+        self.labels = labels
+        self.lndmrks = lndmrks
+        if len(img_file_paths) != len(labels):
             raise NumberOfFileNotSame()
 
     def __len__(self):
@@ -47,9 +32,8 @@ class CustomImageDataset(Dataset):
         x = read_image(self.total_img_file_paths[idx])
         org_img_size = x.size()[1:]
 
-        df = pd.read_json(self.total_label_file_paths[idx])
-        y_label = torch.Tensor([self.dir_names.index(df["Letter"][0])])
-        y_lndmrk = torch.Tensor(df["Landmarks"])
+        y_label = torch.Tensor([self.labels[idx]])
+        y_lndmrk = torch.Tensor(self.lndmrks[idx])
 
         if self.resize_transform is not None:
             x = self.resize_transform(x)
@@ -62,44 +46,27 @@ class CustomImageDataset(Dataset):
 
 
 class CustomImageDatasetLoadAllIntoMemory(Dataset):
-    def __init__(self, cfg: Config, resize_transform=None):
+    def __init__(self, cfg: Config, img_file_paths, labels, lndmrks, resize_transform=None):
         self.cfg = cfg
 
-        total_img_file_paths = list()
-        total_label_file_paths = list()
-        self.dir_names = list()
-        for dir_name in os.listdir(self.cfg.dataset_root_path):
-            self.dir_names.append(dir_name)
-            dir_path = os.path.join(self.cfg.dataset_root_path, dir_name)
-            img_dir_path = os.path.join(dir_path, "lit")
-            anno_dir_path = os.path.join(dir_path, "annotation")
-
-            for img_name in os.listdir(os.path.join(dir_path, "lit")):
-                img_file_path = os.path.join(img_dir_path, img_name)
-                total_img_file_paths.append(img_file_path)
-
-            for anno_name in os.listdir(os.path.join(dir_path, "annotation")):
-                label_file_path = os.path.join(anno_dir_path, anno_name)
-                total_label_file_paths.append(label_file_path)
-        if len(total_img_file_paths) != len(total_label_file_paths):
+        self.total_img_file_paths = img_file_paths
+        if len(img_file_paths) != len(labels):
             raise NumberOfFileNotSame
 
         self.imgs = list()
         self.labels = list()
         self.lndmrks = list()
         load_image_tqdm = tqdm(
-            enumerate(zip(total_img_file_paths, total_label_file_paths)),
+            enumerate(zip(self.total_img_file_paths, labels, lndmrks)),
             desc=f"Load images...",
-            total=len(total_img_file_paths)
+            total=len(self.total_img_file_paths)
         )
-        cnt = 0
-        for i, (img_file_path, label_file_path) in load_image_tqdm:
+        for i, (img_file_path, label, lndmrk) in load_image_tqdm:
             img = read_image(img_file_path)
             org_img_size = img.size()[1:]
 
-            df = pd.read_json(label_file_path)
-            y_label = torch.Tensor([self.dir_names.index(df["Letter"][0])])
-            y_lndmrk = torch.Tensor(df["Landmarks"])
+            y_label = torch.Tensor(labels[i])
+            y_lndmrk = torch.Tensor(lndmrks[i])
 
             if resize_transform is not None:
                 img = resize_transform(img)
@@ -112,8 +79,6 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             self.imgs.append(img)
             self.labels.append(y_label)
             self.lndmrks.append(y_lndmrk)
-
-            cnt += 1
 
     def __len__(self):
         return len(self.labels)
