@@ -65,7 +65,7 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             img = read_image(img_file_path)
             org_img_size = img.size()[1:]
 
-            y_label = torch.Tensor(dataset_df["labels"][i])
+            y_label = torch.Tensor([dataset_df["labels"][i]])
             y_lndmrk = torch.Tensor(dataset_df["lndmrks"][i])
 
             if resize_transform is not None:
