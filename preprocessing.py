@@ -68,7 +68,10 @@ def main():
         "train_lndmrks": train_lndmrks
     })
     train_df.to_json(
-        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json"
+        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json",
+        orient="records",
+        index=False,
+        indent=4
     )
     valid_df = pd.DataFrame({
         "valid_img_file_paths": valid_img_file_paths,
@@ -76,7 +79,10 @@ def main():
         "valid_lndmrks": valid_lndmrks,
     })
     valid_df.to_json(
-        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json"
+        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json",
+        orient="records",
+        index=False,
+        indent=4
     )
     test_df = pd.DataFrame({
         "test_img_file_paths": test_img_file_paths,
@@ -84,7 +90,10 @@ def main():
         "test_lndmrks": test_lndmrks
     })
     test_df.to_json(
-        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset.json"
+        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset.json",
+        orient="records",
+        index=False,
+        indent=4
     )
 
 
