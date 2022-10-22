@@ -14,15 +14,15 @@ class NumberOfFileNotSame(Exception):
 
 
 class CustomImageDataset(Dataset):
-    def __init__(self, cfg: Config, img_file_paths, labels, lndmrks, resize_transform=None):
+    def __init__(self, cfg: Config, dataset_df, resize_transform=None):
         self.resize_transform = resize_transform
 
         self.cfg = cfg
 
-        self.total_img_file_paths = img_file_paths
-        self.labels = labels
-        self.lndmrks = lndmrks
-        if len(img_file_paths) != len(labels):
+        self.total_img_file_paths = dataset_df["img_file_paths"]
+        self.labels = dataset_df["labels"]
+        self.lndmrks = dataset_df["lndmrks"]
+        if len(self.total_img_file_paths) != len(self.labels):
             raise NumberOfFileNotSame()
 
     def __len__(self):
@@ -46,18 +46,18 @@ class CustomImageDataset(Dataset):
 
 
 class CustomImageDatasetLoadAllIntoMemory(Dataset):
-    def __init__(self, cfg: Config, img_file_paths, labels, lndmrks, resize_transform=None):
+    def __init__(self, cfg: Config, dataset_df, resize_transform=None):
         self.cfg = cfg
 
-        self.total_img_file_paths = img_file_paths
-        if len(img_file_paths) != len(labels):
+        self.total_img_file_paths = dataset_df["img_file_paths"]
+        if len(self.total_img_file_paths) != len(dataset_df["labels"]):
             raise NumberOfFileNotSame
 
         self.imgs = list()
         self.labels = list()
         self.lndmrks = list()
         load_image_tqdm = tqdm(
-            enumerate(zip(self.total_img_file_paths, labels, lndmrks)),
+            enumerate(zip(self.total_img_file_paths, dataset_df["labels"], dataset_df["lndmrks"])),
             desc=f"Load images...",
             total=len(self.total_img_file_paths)
         )
@@ -65,8 +65,8 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             img = read_image(img_file_path)
             org_img_size = img.size()[1:]
 
-            y_label = torch.Tensor(labels[i])
-            y_lndmrk = torch.Tensor(lndmrks[i])
+            y_label = torch.Tensor(dataset_df["labels"][i])
+            y_lndmrk = torch.Tensor(dataset_df["lndmrks"][i])
 
             if resize_transform is not None:
                 img = resize_transform(img)

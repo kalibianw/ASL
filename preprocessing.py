@@ -63,9 +63,9 @@ def main():
     print(len(test_img_file_paths), len(test_labels), len(test_lndmrks))
 
     train_df = pd.DataFrame({
-        "train_img_file_paths": train_img_file_paths,
-        "train_labels": train_labels,
-        "train_lndmrks": train_lndmrks
+        "img_file_paths": train_img_file_paths,
+        "labels": train_labels,
+        "lndmrks": train_lndmrks
     })
     train_df.to_json(
         path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json",
@@ -74,9 +74,9 @@ def main():
         indent=4
     )
     valid_df = pd.DataFrame({
-        "valid_img_file_paths": valid_img_file_paths,
-        "valid_labels": valid_labels,
-        "valid_lndmrks": valid_lndmrks,
+        "img_file_paths": valid_img_file_paths,
+        "labels": valid_labels,
+        "lndmrks": valid_lndmrks,
     })
     valid_df.to_json(
         path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json",
@@ -85,9 +85,9 @@ def main():
         indent=4
     )
     test_df = pd.DataFrame({
-        "test_img_file_paths": test_img_file_paths,
-        "test_labels": test_labels,
-        "test_lndmrks": test_lndmrks
+        "img_file_paths": test_img_file_paths,
+        "labels": test_labels,
+        "lndmrks": test_lndmrks
     })
     test_df.to_json(
         path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset.json",

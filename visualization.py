@@ -24,9 +24,7 @@ def main():
 
     cid = CustomImageDataset(
         cfg=cfg,
-        img_file_paths=train_df["train_img_file_paths"],
-        labels=train_df["train_labels"],
-        lndmrks=train_df["train_lndmrks"],
+        dataset_df=train_df,
         resize_transform=resize_transform
     )
 
