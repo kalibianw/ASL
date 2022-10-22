@@ -1,22 +1,21 @@
-from utils import Config, Visualization
+from utils import Config, read_json, Visualization
 from model import Model
 from dataset import CustomImageDataset, CustomImageDatasetLoadAllIntoMemory
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
-import pandas as pd
-import os
 
 import torch
 import torch.nn as nn
 
 import matplotlib.pyplot as plt
+import os
 
 
 def main():
     cfg = Config()
 
-    train_df = pd.read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json")
+    train_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json")
 
     resize_transform = nn.Sequential(
         transforms.Resize(cfg.output_hm_shape)

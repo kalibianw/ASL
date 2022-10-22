@@ -1,7 +1,9 @@
+import pandas as pd
 import torch
 
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 
 class Config:
@@ -15,7 +17,7 @@ class Config:
 
     # for NN
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    resnet_type = 18    # 18, 34, 50, 101, 152
+    resnet_type = 18  # 18, 34, 50, 101, 152
     batch_size = 32
 
 
@@ -37,6 +39,14 @@ class Visualization:
 
         plt.imshow(heatmap)
         plt.show()
+
+
+def read_json(path):
+    with open(path) as handler:
+        data = json.load(handler)
+    df = pd.DataFrame(data["data"])
+
+    return df
 
 
 def export_model(model, dsize, device, export_name="model.onnx"):

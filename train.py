@@ -1,11 +1,10 @@
-from utils import Config, export_model
+from utils import Config, read_json, export_model
 from dataset import CustomImageDatasetLoadAllIntoMemory
 from model import Model
 from trainer import TrainEvalModule
 
 from torchvision import transforms
 from torch.utils.data import DataLoader
-import pandas as pd
 
 import torch
 import torch.nn as nn
@@ -35,7 +34,7 @@ def main():
         transforms.Resize(cfg.output_hm_shape)
     )
 
-    train_df = pd.read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json")
+    train_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json")
     train_cid = CustomImageDatasetLoadAllIntoMemory(
         cfg=cfg,
         dataset_df=train_df,
@@ -47,7 +46,7 @@ def main():
         shuffle=True
     )
 
-    valid_df = pd.read_json(f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json")
+    valid_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json")
     valid_cid = CustomImageDatasetLoadAllIntoMemory(
         cfg=cfg,
         dataset_df=valid_df,
