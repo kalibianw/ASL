@@ -5,11 +5,18 @@ import matplotlib.pyplot as plt
 
 
 class Config:
-    dataset_root_path = "D:/AI/data/ASL Alphabet Synthetic/dataset/"
+    # for data
+    dataset_root_path = "D:/AI/data/ASL Alphabet Synthetic/dataset"
     output_hm_shape = (256, 256)  # (height, width)
     joint_num = 26
+
+    # for generate gaussian heatmap
     sigma = 2.5
+
+    # for NN
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     resnet_type = 18    # 18, 34, 50, 101, 152
+    batch_size = 32
 
 
 class Visualization:
