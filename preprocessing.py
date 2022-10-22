@@ -69,7 +69,7 @@ def main():
     })
     train_df.to_json(
         path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json",
-        orient="records",
+        orient="table",
         index=False,
         indent=4
     )
@@ -80,7 +80,7 @@ def main():
     })
     valid_df.to_json(
         path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json",
-        orient="records",
+        orient="table",
         index=False,
         indent=4
     )
@@ -91,7 +91,7 @@ def main():
     })
     test_df.to_json(
         path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset.json",
-        orient="records",
+        orient="table",
         index=False,
         indent=4
     )
