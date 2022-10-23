@@ -77,8 +77,10 @@ class TrainEvalModule:
                 x = x.to(self.cfg.device)
                 y_label = y_label.to(self.cfg.device).long()
                 y_lndmrk = y_lndmrk.to(self.cfg.device)
-
-                y_heatmap = self.model.render_gaussian_heatmap(y_lndmrk)
+                batch_heatmaps = list()
+                for lndmrk in y_lndmrk:
+                    batch_heatmaps.append(torch.stack(self.model.render_gaussian_heatmap(lndmrk)))
+                y_heatmap = torch.stack(batch_heatmaps)
                 y_label = y_label.squeeze(dim=-1)
 
                 heatmap_out, class_out = self.model(x)
