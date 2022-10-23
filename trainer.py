@@ -20,7 +20,12 @@ class TrainEvalModule:
         train_class_loss = 0
         train_class_correct = 0
 
-        for batch_idx, (x, y_label, y_lndmrk) in tqdm(enumerate(train_loader), desc=f"Epoch: {epoch_cnt}", total=int(len(train_loader.dataset) / self.cfg.batch_size)):
+        train_tqdm = tqdm(
+            iterable=enumerate(train_loader),
+            desc=f"Epoch {epoch_cnt}: heatmap_loss: _; class_loss: _; total_loss: _;",
+            total=int(len(train_loader.dataset) / self.cfg.batch_size)
+        )
+        for batch_idx, (x, y_label, y_lndmrk) in train_tqdm:
             x = x.to(self.cfg.device)
             y_label = y_label.to(self.cfg.device).long()
             y_lndmrk = y_lndmrk.to(self.cfg.device)
@@ -47,6 +52,10 @@ class TrainEvalModule:
             prediction = class_out.max(1, keepdim=True)[1]
             train_class_correct += prediction.eq(y_label.view_as(prediction)).sum().item()
 
+            train_tqdm.set_description(
+                desc=f"Epoch {epoch_cnt}: heatmap_loss: {heatmap_loss_out.item():.4f}; class_loss: {class_loss_out.item():.4f}; total_loss: {total_loss.item():.4f};"
+            )
+
         train_heatmap_loss /= (len(train_loader.dataset) / self.cfg.batch_size)
         train_class_loss /= (len(train_loader.dataset) / self.cfg.batch_size)
         train_class_acc = 100. * train_class_correct / len(train_loader.dataset)
@@ -59,7 +68,12 @@ class TrainEvalModule:
         test_class_loss = 0
         test_class_correct = 0
         with torch.no_grad():
-            for batch_idx, (x, y_label, y_lndmrk) in tqdm(test_loader, desc="Evaluate...", total=int(len(test_loader.dataset) / self.cfg.batch_size)):
+            test_tqdm = tqdm(
+                iterable=test_loader,
+                desc="batch_idx _: heatmap_loss: _; class_loss: _; total_loss: _;",
+                total=int(len(test_loader.dataset) / self.cfg.batch_size)
+            )
+            for batch_idx, (x, y_label, y_lndmrk) in test_tqdm:
                 x = x.to(self.cfg.device)
                 y_label = y_label.to(self.cfg.device).long()
                 y_lndmrk = y_lndmrk.to(self.cfg.device)
@@ -72,10 +86,16 @@ class TrainEvalModule:
                 heatmap_loss_out = self.heatmap_loss(heatmap_out, y_heatmap)
                 class_loss_out = self.class_loss(class_out, y_label)
 
+                total_loss = heatmap_loss_out + class_loss_out
+
                 test_heatmap_loss += heatmap_loss_out.item()
                 test_class_loss += class_loss_out.item()
                 prediction = class_out.max(1, keepdim=True)[1]
                 test_class_correct += prediction.eq(y_label.view_as(prediction)).sum().item()
+
+                test_tqdm.set_description(
+                    f"batch_idx {batch_idx}: heatmap_loss: {heatmap_loss_out.item():.4f}; class_loss: {class_loss_out.item():.4f}; total_loss: {total_loss.item():.4f};"
+                )
 
         test_heatmap_loss /= (len(test_loader.dataset) / self.cfg.batch_size)
         test_class_loss /= (len(test_loader.dataset) / self.cfg.batch_size)
