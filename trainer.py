@@ -69,8 +69,8 @@ class TrainEvalModule:
         test_class_correct = 0
         with torch.no_grad():
             test_tqdm = tqdm(
-                iterable=test_loader,
-                desc="batch_idx _: heatmap_loss: _; class_loss: _; total_loss: _;",
+                iterable=enumerate(test_loader),
+                desc="Evaluate batch_idx _: heatmap_loss: _; class_loss: _; total_loss: _;",
                 total=int(len(test_loader.dataset) / self.cfg.batch_size)
             )
             for batch_idx, (x, y_label, y_lndmrk) in test_tqdm:
@@ -94,7 +94,7 @@ class TrainEvalModule:
                 test_class_correct += prediction.eq(y_label.view_as(prediction)).sum().item()
 
                 test_tqdm.set_description(
-                    f"batch_idx {batch_idx}: heatmap_loss: {heatmap_loss_out.item():.4f}; class_loss: {class_loss_out.item():.4f}; total_loss: {total_loss.item():.4f};"
+                    f"Evaluate batch_idx {batch_idx}: heatmap_loss: {heatmap_loss_out.item():.4f}; class_loss: {class_loss_out.item():.4f}; total_loss: {total_loss.item():.4f};"
                 )
 
         test_heatmap_loss /= (len(test_loader.dataset) / self.cfg.batch_size)
