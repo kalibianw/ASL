@@ -29,7 +29,7 @@ class CustomImageDataset(Dataset):
         return len(self.total_img_file_paths)
 
     def __getitem__(self, idx):
-        x = read_image(self.total_img_file_paths[idx])
+        x = read_image(self.total_img_file_paths[idx])[0:3]
         org_img_size = x.size()[1:]
 
         y_label = torch.Tensor([self.labels[idx]])
@@ -62,7 +62,7 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             total=len(self.total_img_file_paths)
         )
         for i, (img_file_path, label, lndmrk) in load_image_tqdm:
-            img = read_image(img_file_path)
+            img = read_image(img_file_path)[0:3]
             org_img_size = img.size()[1:]
 
             y_label = torch.Tensor([dataset_df["labels"][i]])
