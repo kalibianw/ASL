@@ -1,4 +1,5 @@
 from utils import Config
+from exceptions import NumberOfFileNotSame
 
 from sklearn.model_selection import train_test_split
 
@@ -6,11 +7,6 @@ import pandas as pd
 import os
 
 from tqdm import tqdm
-
-
-class NumberOfFileNotSame(Exception):
-    def __init__(self):
-        super().__init__("The number of image files and label files doesn't same.")
 
 
 def main():
