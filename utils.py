@@ -49,13 +49,19 @@ def read_json(path):
     return df
 
 
-def export_model(model, dsize, device, export_name="model.onnx"):
-    dummy_data = torch.empty(
-        size=dsize,
-        device=device
+def export_model(model, input_size, device, export_onnx=True, export_name="model"):
+    torch.save(
+        obj=model.state_dict(),
+        f=f"{export_name}.pt"
     )
-    torch.onnx.export(
-        model,
-        dummy_data,
-        export_name
-    )
+
+    if export_onnx:
+        dummy_data = torch.empty(
+            size=input_size,
+            device=device
+        )
+        torch.onnx.export(
+            model,
+            dummy_data,
+            f"{export_name}.onnx"
+        )
