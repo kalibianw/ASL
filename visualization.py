@@ -37,7 +37,7 @@ def main():
     stacked_heatmaps = torch.stack(heatmaps_tensor)
 
     vis = Visualization(cfg=cfg)
-    vis.multi_heatmap_visualization(heatmaps_tensor=stacked_heatmaps)
+    vis.multiple_joint_heatmap_visualization(heatmaps_tensor=stacked_heatmaps)
 
     print(y_label[0])
     plt.imshow(x[0][0].cpu().numpy())

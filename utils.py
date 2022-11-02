@@ -25,14 +25,14 @@ class Visualization:
     def __init__(self, cfg: Config):
         self.cfg = cfg
 
-    def single_heatmap_visualization(self, heatmap_tensor):
+    def single_joint_heatmap_visualization(self, heatmap_tensor):
         heatmap = np.zeros(shape=self.cfg.output_hm_shape)
         heatmap += heatmap_tensor.cpu().numpy()
 
         plt.imshow(heatmap)
         plt.show()
 
-    def multi_heatmap_visualization(self, heatmaps_tensor):
+    def multiple_joint_heatmap_visualization(self, heatmaps_tensor):
         heatmap = np.zeros(shape=self.cfg.output_hm_shape)
         for joint_heatmap in heatmaps_tensor.cpu().numpy():
             heatmap = heatmap + joint_heatmap
