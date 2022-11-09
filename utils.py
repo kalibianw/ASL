@@ -25,19 +25,29 @@ class Visualization:
     def __init__(self, cfg: Config):
         self.cfg = cfg
 
-    def single_joint_heatmap_visualization(self, heatmap_tensor):
+    def single_joint_heatmap_visualization(self, heatmap_tensor, export_fig_name=""):
         heatmap = np.zeros(shape=self.cfg.output_hm_shape)
         heatmap += heatmap_tensor.cpu().detach().numpy()
 
         plt.imshow(heatmap)
+        if export_fig_name != "":
+            plt.savefig(
+                f"{export_fig_name}.png",
+                dpi=300
+            )
         plt.show()
 
-    def multiple_joint_heatmap_visualization(self, heatmaps_tensor):
+    def multiple_joint_heatmap_visualization(self, heatmaps_tensor, export_fig_name=""):
         heatmap = np.zeros(shape=self.cfg.output_hm_shape)
         for joint_heatmap in heatmaps_tensor.cpu().detach().numpy():
             heatmap = heatmap + joint_heatmap
 
         plt.imshow(heatmap)
+        if export_fig_name != "":
+            plt.savefig(
+                f"{export_fig_name}.png",
+                dpi=300
+            )
         plt.show()
 
 
