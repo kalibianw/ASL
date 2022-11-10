@@ -65,20 +65,20 @@ class CustomImageDatasetLoadAllIntoMemory(Dataset):
             img = read_image(img_file_path)[0:3]
             org_img_size = img.size()[1:]
 
-            y_label = torch.Tensor([dataset_df["labels"][i]])
-            y_lndmrk = torch.Tensor(dataset_df["lndmrks"][i])
+            label = torch.Tensor([label])
+            lndmrk = torch.Tensor(lndmrk)
 
             if resize_transform is not None:
                 img = resize_transform(img)
-                new_lndmrk_x_coord = y_lndmrk[:, 0] / org_img_size[1] * self.cfg.output_hm_shape[1]
-                new_lndmrk_y_coord = y_lndmrk[:, 1] / org_img_size[0] * self.cfg.output_hm_shape[0]
-                y_lndmrk = torch.stack((new_lndmrk_x_coord, new_lndmrk_y_coord), dim=1)
+                new_lndmrk_x_coord = lndmrk[:, 0] / org_img_size[1] * self.cfg.output_hm_shape[1]
+                new_lndmrk_y_coord = lndmrk[:, 1] / org_img_size[0] * self.cfg.output_hm_shape[0]
+                lndmrk = torch.stack((new_lndmrk_x_coord, new_lndmrk_y_coord), dim=1)
 
             img = img.to(torch.float32)
 
             self.imgs.append(img)
-            self.labels.append(y_label)
-            self.lndmrks.append(y_lndmrk)
+            self.labels.append(label)
+            self.lndmrks.append(lndmrk)
 
     def __len__(self):
         return len(self.labels)
