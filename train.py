@@ -1,5 +1,5 @@
 from utils import Config, read_json, export_model
-from dataset import CustomImageDatasetLoadAllIntoMemory
+from dataset import CustomImageDataset
 from model import Model
 from trainer import TrainEvalModule
 
@@ -34,8 +34,8 @@ def main():
         transforms.Resize(cfg.output_hm_shape)
     )
 
-    train_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json")
-    train_cid = CustomImageDatasetLoadAllIntoMemory(
+    train_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset_ij.json")
+    train_cid = CustomImageDataset(
         cfg=cfg,
         dataset_df=train_df,
         resize_transform=resize_transform
@@ -46,8 +46,8 @@ def main():
         shuffle=True
     )
 
-    valid_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json")
-    valid_cid = CustomImageDatasetLoadAllIntoMemory(
+    valid_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset_ij.json")
+    valid_cid = CustomImageDataset(
         cfg=cfg,
         dataset_df=valid_df,
         resize_transform=resize_transform

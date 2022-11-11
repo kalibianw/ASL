@@ -16,6 +16,8 @@ def main():
     total_lndmrks = list()
 
     for i, dir_name in enumerate(os.listdir(cfg.dataset_root_path)):
+        if i >= 9:
+            i = i - 1
         dir_path = os.path.join(cfg.dataset_root_path, dir_name)
         img_dir_path = os.path.join(dir_path, "lit")
         anno_dir_path = os.path.join(dir_path, "annotation")
@@ -44,7 +46,7 @@ def main():
         total_img_file_paths,
         total_labels,
         total_lndmrks,
-        test_size=0.4,
+        test_size=0.2,
         stratify=total_labels
     )
     train_img_file_paths, valid_img_file_paths, train_labels, valid_labels, train_lndmrks, valid_lndmrks = train_test_split(
@@ -64,7 +66,7 @@ def main():
         "lndmrks": train_lndmrks
     })
     train_df.to_json(
-        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json",
+        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset_ij.json",
         orient="table",
         index=False,
         indent=4
@@ -75,7 +77,7 @@ def main():
         "lndmrks": valid_lndmrks,
     })
     valid_df.to_json(
-        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset.json",
+        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/valid_dataset_ij.json",
         orient="table",
         index=False,
         indent=4
@@ -86,7 +88,7 @@ def main():
         "lndmrks": test_lndmrks
     })
     test_df.to_json(
-        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset.json",
+        path_or_buf=f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset_ij.json",
         orient="table",
         index=False,
         indent=4

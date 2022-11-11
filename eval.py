@@ -30,7 +30,7 @@ def main():
     cfg = Config()
     cfg.batch_size = BATCH_SIZE
 
-    test_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset.json")
+    test_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset_ij.json")
 
     resize_transform = nn.Sequential(
         transforms.Resize(cfg.output_hm_shape)
