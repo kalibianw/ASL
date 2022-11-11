@@ -68,7 +68,7 @@ def main():
         model=model,
         input_size=(32, 3, 256, 256),
         device=cfg.device,
-        export_name="model(empty)"
+        export_name="model/model(empty)"
     )
 
     optimizer = torch.optim.Adam(
