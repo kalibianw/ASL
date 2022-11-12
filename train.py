@@ -96,6 +96,13 @@ def main():
 
     start_time = time.time()
     for epoch in range(1, NUM_EPOCHS + 1):
+        if epoch % 5 == 0:
+            export_model(
+                model=model,
+                input_size=(32, 3, 256, 256),
+                device=cfg.device,
+                export_name=f"model/pt (epoch - {epoch})"
+            )
         model, train_heatmap_loss, train_class_loss, train_class_acc = tem.train(train_loader, optimizer=optimizer, epoch_cnt=epoch)
         print(f"\n[EPOCH: {epoch}] - Train Heatmap Loss: {train_heatmap_loss:.4f}; Train Class Loss: {train_class_loss:.4f}; Train Accuracy: {train_class_acc:.2f}%")
         model, valid_heatmap_loss, valid_class_loss, valid_class_acc = tem.evaluate(valid_loader)
