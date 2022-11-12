@@ -87,7 +87,7 @@ class PoseNet(nn.Module):
             self.joint_deconv1 = make_deconv_layers([512, 256, 256, 128, 128, 64])
             self.joint_conv1 = make_conv_layers([64, cfg.joint_num], kernel=1, stride=1, padding=0, bnrelu_final=False)
 
-            self.fc = make_linear_layers([512 * 8 * 8, 26], relu_final=False)
+            self.fc = make_linear_layers([512 * 8 * 8, 25], relu_final=False)
         else:
             self.joint_deconv1 = make_deconv_layers([2048, 512, 512, 256, 256, 128])
             self.joint_conv1 = make_conv_layers([128, cfg.joint_num], kernel=1, stride=1, padding=0, bnrelu_final=False)
