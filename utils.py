@@ -25,6 +25,15 @@ class Config:
     resnet_type = 18  # 18, 34, 50, 101, 152
     batch_size = 32
 
+    # for training
+    lr = 1e-3
+    num_epochs = 1000
+    early_stopping_patience = 10
+    reduce_lr_patience = 3
+    reduce_lr_rate = 0.5,
+    heatmap_loss_rate = 1
+    class_loss_rate = 1
+
 
 class Visualization:
     def __init__(self, cfg: Config):
