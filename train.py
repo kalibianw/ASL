@@ -68,7 +68,7 @@ def main():
         model=model,
         input_size=(32, 3, 256, 256),
         device=cfg.device,
-        export_name="model/model(empty)"
+        export_name="model/model(empty)_ij"
     )
 
     optimizer = torch.optim.Adam(
@@ -127,7 +127,7 @@ def main():
                 model=model,
                 input_size=(32, 3, 256, 256),
                 device=cfg.device,
-                export_name=f"model/pt_[{valid_heatmap_loss:.4f}_{valid_class_loss:.4f}]"
+                export_name=f"model/pt_[{valid_heatmap_loss:.4f}_{valid_class_loss:.4f}]_ij"
             )
         else:
             early_stopping_cnt += 1
