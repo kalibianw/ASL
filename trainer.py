@@ -14,7 +14,7 @@ class TrainEvalModule:
         self.heatmap_loss = heatmap_loss
         self.class_loss = class_loss
 
-    def train(self, train_loader, optimizer, epoch_cnt):
+    def train(self, train_loader, optimizer, epoch_cnt, heatmap_loss_rate=1, class_loss_rate=1):
         self.model.train()
         train_heatmap_loss = 0
         train_class_loss = 0
@@ -42,7 +42,7 @@ class TrainEvalModule:
             class_loss_out = self.class_loss(class_out, y_label)
             heatmap_loss_out = self.heatmap_loss(heatmap_out, y_heatmap)
 
-            total_loss = heatmap_loss_out + class_loss_out
+            total_loss = heatmap_loss_out * heatmap_loss_rate + class_loss_out * class_loss_rate
             total_loss.backward()
 
             optimizer.step()

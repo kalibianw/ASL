@@ -17,18 +17,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-BATCH_SIZE = 1
-# MODEL_PATH = "model/pt_[1.2928_0.3989].onnx"
-MODEL_PATHS = [
-    "model/pt_[1.2928_0.3989].onnx",
-    "model/pt_[1.7891_0.1889].onnx",
-    "model/pt_[2.7934_0.1285].onnx"
-]
-
 
 def main():
     cfg = Config()
-    cfg.batch_size = BATCH_SIZE
+    cfg.batch_size = 1
+
+    model_paths = [
+        "model/pt_[1.3895_0.0190]_ij.onnx"
+    ]
 
     test_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/test_dataset_ij.json")
 
@@ -47,15 +43,15 @@ def main():
     x, y_label, y_lndmrk = next(iter(loader))
     x = x.to(cfg.device)
 
-    for MODEL_PATH in MODEL_PATHS:
-        model_ext = os.path.splitext(MODEL_PATH)[1][1:]
+    for model_path in model_paths:
+        model_ext = os.path.splitext(model_path)[1][1:]
         if model_ext == "onnx":
             print("Detect the onnx model")
-            onnx_model = onnx.load_model(MODEL_PATH)
+            onnx_model = onnx.load_model(model_path)
             model = convert(onnx_model)
         elif model_ext == "pt":
             print("Detect the pt model")
-            model = torch.load(MODEL_PATH)
+            model = torch.load(model_path)
         else:
             raise ModelTypeError
         summary(
@@ -69,7 +65,7 @@ def main():
         vis = Visualization(cfg=cfg)
         vis.multiple_joint_heatmap_visualization(
             heatmaps_tensor=heatmap_out[0],
-            export_fig_name=f"plot/{os.path.splitext(os.path.basename(MODEL_PATH))[0]}"
+            export_fig_name=f"plot/{os.path.splitext(os.path.basename(model_path))[0]}"
         )
         plt.imshow(x[0][0].cpu().numpy())
         plt.show()

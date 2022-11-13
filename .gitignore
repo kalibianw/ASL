@@ -1,5 +1,4 @@
 .idea/
 tmp/
-log/
-model/
+output/
 plot/
