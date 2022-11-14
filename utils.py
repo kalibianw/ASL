@@ -30,7 +30,7 @@ class Config:
     num_epochs = 1000
     early_stopping_patience = 10
     reduce_lr_patience = 3
-    reduce_lr_rate = 0.5,
+    reduce_lr_rate = 0.5
     heatmap_loss_rate = 1
     class_loss_rate = 1
 
