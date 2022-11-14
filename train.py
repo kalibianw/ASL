@@ -26,9 +26,14 @@ def main():
     os.makedirs(os.path.join(output_dir, "model"))
 
     pd.DataFrame.from_records([{
+        "DATASET_ROOT_PATH": cfg.dataset_root_path,
+        "OUPTUT_HM_SHAPE": cfg.output_hm_shape,
+        "JOINT_NUM": cfg.joint_num,
+        "SIGMA": cfg.sigma,
+        "DEVICE": cfg.device,
         "RESNET_TYPE": cfg.resnet_type,
-        "NUM_EPOCHS": cfg.num_epochs,
         "BATCH_SIZE": cfg.batch_size,
+        "NUM_EPOCHS": cfg.num_epochs,
         "EARLY_STOPPING_PATIENCE": cfg.early_stopping_patience,
         "REDUCE_LR_PATIENCE": cfg.reduce_lr_patience,
         "REDUCE_LR_RATE": cfg.reduce_lr_rate,
