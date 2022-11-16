@@ -123,7 +123,7 @@ class Visualization:
         heatmap = np.zeros(shape=self.cfg.output_hm_shape)
         for joint_heatmap in heatmaps_tensor.cpu().detach().numpy():
             heatmap = heatmap + joint_heatmap
-
+        plt.title("Heatmap")
         plt.imshow(heatmap)
         if export_fig_name != "":
             plt.savefig(

@@ -14,6 +14,7 @@ import os
 
 def main():
     cfg = Config()
+    cfg.batch_size = 1
 
     train_df = read_json(f"{os.path.dirname(cfg.dataset_root_path)}/train_dataset.json")
 
@@ -27,7 +28,7 @@ def main():
         resize_transform=resize_transform
     )
 
-    loader = DataLoader(cid, batch_size=32, shuffle=True)
+    loader = DataLoader(cid, batch_size=cfg.batch_size, shuffle=True)
 
     x, y_label, y_lndmrk = next(iter(loader))
 
@@ -37,7 +38,10 @@ def main():
     stacked_heatmaps = torch.stack(heatmaps_tensor)
 
     vis = Visualization(cfg=cfg)
-    vis.multiple_joint_heatmap_visualization(heatmaps_tensor=stacked_heatmaps)
+    vis.multiple_joint_heatmap_visualization(
+        heatmaps_tensor=stacked_heatmaps,
+        export_fig_name="plot/GT Heatmap"
+    )
 
     print(y_label[0])
     plt.imshow(x[0][0].cpu().numpy())

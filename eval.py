@@ -1,6 +1,7 @@
 from utils import Config, read_json, Visualization
 from dataset import CustomImageDataset
 from exceptions import ModelTypeError
+from model import Model
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -65,9 +66,15 @@ def main():
         vis = Visualization(cfg=cfg)
         vis.multiple_joint_heatmap_visualization(
             heatmaps_tensor=heatmap_out[0],
-            export_fig_name=f"plot/{os.path.splitext(os.path.basename(model_path))[0]}"
+            export_fig_name=f"plot/Output heatmap.png"
         )
+
+        plt.title("Original")
         plt.imshow(x[0][0].cpu().numpy())
+        plt.savefig(
+            "plot/Input image.png",
+            dpi=300
+        )
         plt.show()
 
         print(y_label[0])
@@ -88,7 +95,10 @@ def main():
 
         img = vis.draw_line(img=img, lndmrk=argmax_coord, color=(255, 255, 255))
         plt.imshow(img)
-        plt.title(f"{np.argmax(cls_out)}")
+        plt.title(f"Target: {y_label[0]}; Output: {np.argmax(cls_out)}")
+        plt.savefig(
+            "plot/lines.png"
+        )
         plt.show()
 
 
