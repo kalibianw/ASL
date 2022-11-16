@@ -69,7 +69,7 @@ class Visualization:
     def _line2(self, img, num, data, color):
         cv2.line(img, data[num], data[num + 5], color, 2)
 
-    def plot_confusion_matrix(self, cm, target_names=None, cmap=None, normalize=True, labels=True, title='Confusion matrix'):
+    def plot_confusion_matrix(self, cm, target_names=None, cmap=None, normalize=True, labels=True, title='Confusion matrix', export_name=""):
         accuracy = np.trace(cm) / float(np.sum(cm))
         misclass = 1 - accuracy
 
@@ -102,9 +102,13 @@ class Visualization:
                              horizontalalignment="center",
                              color="white" if cm[i, j] > thresh else "black")
 
-        plt.tight_layout()
         plt.ylabel('True label')
         plt.xlabel('Predicted label\naccuracy={:0.4f}; misclass={:0.4f}'.format(accuracy, misclass))
+        if export_name != "":
+            plt.savefig(
+                export_name,
+                dpi=300
+            )
         plt.show()
 
     def single_joint_heatmap_visualization(self, heatmap_tensor, export_fig_name=""):
@@ -119,12 +123,13 @@ class Visualization:
             )
         plt.show()
 
-    def multiple_joint_heatmap_visualization(self, heatmaps_tensor, export_fig_name=""):
+    def multiple_joint_heatmap_visualization(self, heatmaps_tensor, title="Heatmap", export_fig_name=""):
         heatmap = np.zeros(shape=self.cfg.output_hm_shape)
         for joint_heatmap in heatmaps_tensor.cpu().detach().numpy():
             heatmap = heatmap + joint_heatmap
-        plt.title("Heatmap")
         plt.imshow(heatmap)
+        plt.title(title)
+        plt.tight_layout()
         if export_fig_name != "":
             plt.savefig(
                 f"{export_fig_name}.png",

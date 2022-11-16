@@ -2,6 +2,8 @@ from utils import Config
 
 import torch
 
+import numpy as np
+
 from tqdm import tqdm
 
 
@@ -62,11 +64,13 @@ class TrainEvalModule:
 
         return self.model, train_heatmap_loss, train_class_loss, train_class_acc
 
-    def evaluate(self, test_loader):
+    def evaluate(self, test_loader, gaussian_renderer=None, return_cls_output=False):
         self.model.eval()
         test_heatmap_loss = 0
         test_class_loss = 0
         test_class_correct = 0
+        cls_target = np.array([])
+        cls_output = np.array([])
         with torch.no_grad():
             test_tqdm = tqdm(
                 iterable=enumerate(test_loader),
@@ -79,11 +83,18 @@ class TrainEvalModule:
                 y_lndmrk = y_lndmrk.to(self.cfg.device)
                 batch_heatmaps = list()
                 for lndmrk in y_lndmrk:
+                    if gaussian_renderer is not None:
+                        batch_heatmaps.append(torch.stack(gaussian_renderer.render_gaussian_heatmap(lndmrk)))
+                        continue
                     batch_heatmaps.append(torch.stack(self.model.render_gaussian_heatmap(lndmrk)))
                 y_heatmap = torch.stack(batch_heatmaps)
                 y_label = y_label.squeeze(dim=-1)
 
                 heatmap_out, class_out = self.model(x)
+
+                if return_cls_output:
+                    cls_target = np.append(cls_target, y_label.cpu().detach().numpy())
+                    cls_output = np.append(cls_output, np.argmax(class_out.cpu().detach().numpy(), axis=1))
 
                 heatmap_loss_out = self.heatmap_loss(heatmap_out, y_heatmap)
                 class_loss_out = self.class_loss(class_out, y_label)
@@ -103,4 +114,7 @@ class TrainEvalModule:
         test_class_loss /= (len(test_loader.dataset) / self.cfg.batch_size)
         test_class_acc = 100. * test_class_correct / len(test_loader.dataset)
 
-        return self.model, test_heatmap_loss, test_class_loss, test_class_acc
+        if return_cls_output is False:
+            return self.model, test_heatmap_loss, test_class_loss, test_class_acc
+        else:
+            return self.model, test_heatmap_loss, test_class_loss, test_class_acc, (cls_target, cls_output)

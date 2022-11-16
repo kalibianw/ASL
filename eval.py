@@ -2,6 +2,7 @@ from utils import Config, read_json, Visualization
 from dataset import CustomImageDataset
 from exceptions import ModelTypeError
 from model import Model
+from trainer import TrainEvalModule
 
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -14,14 +15,13 @@ import onnx
 
 from torchinfo import summary
 
-import matplotlib.pyplot as plt
-import numpy as np
+from sklearn.metrics import confusion_matrix
+
 import os
 
 
 def main():
     cfg = Config()
-    cfg.batch_size = 1
 
     model_paths = [
         "output/2022_11_14_17_43_2/model/pt_[0.9347_0.0588_0.9934]_ij.onnx",
@@ -40,10 +40,6 @@ def main():
     )
 
     loader = DataLoader(cid, batch_size=cfg.batch_size, shuffle=True)
-
-    x, y_label, y_lndmrk = next(iter(loader))
-    x = x.to(cfg.device)
-
     for model_path in model_paths:
         model_ext = os.path.splitext(model_path)[1][1:]
         if model_ext == "onnx":
@@ -57,49 +53,35 @@ def main():
             raise ModelTypeError
         summary(
             model=model,
-            input_size=x.size()
-        )
-        model.eval()
-
-        heatmap_out, cls_out = model(x)
-
-        vis = Visualization(cfg=cfg)
-        vis.multiple_joint_heatmap_visualization(
-            heatmaps_tensor=heatmap_out[0],
-            export_fig_name=f"plot/Output heatmap.png"
+            input_size=(32, 3, 256, 256)
         )
 
-        plt.title("Original")
-        plt.imshow(x[0][0].cpu().numpy())
-        plt.savefig(
-            "plot/Input image.png",
-            dpi=300
+        tem = TrainEvalModule(
+            cfg,
+            model=model,
+            heatmap_loss=nn.MSELoss(),
+            class_loss=nn.CrossEntropyLoss()
         )
-        plt.show()
 
-        print(y_label[0])
-        print(np.argmax(cls_out[0].cpu().detach().numpy()))
+        gaussian_renderer = Model(cfg)
+        (cls_target, cls_output) = tem.evaluate(loader, gaussian_renderer, return_cls_output=True)[-1]
+        print(cls_target)
+        print(cls_output)
+        print(cls_target.shape)
+        print(cls_output.shape)
 
-        heatmap_out = heatmap_out[0].to("cpu").detach().numpy()
-        cls_out = cls_out[0].to("cpu").detach().numpy()
+        vis = Visualization(cfg)
 
-        argmax_coord = list()
-        for heatmap in heatmap_out:
-            y_coord, x_coord = np.unravel_index(heatmap.argmax(), heatmap.shape)
-            argmax_coord.append((x_coord, y_coord))
-        print(argmax_coord)
-
-        img = x.cpu().detach().numpy()[0]
-        img = np.transpose(img, (1, 2, 0))
-        img = img.astype(np.uint8).copy()
-
-        img = vis.draw_line(img=img, lndmrk=argmax_coord, color=(255, 255, 255))
-        plt.imshow(img)
-        plt.title(f"Target: {y_label[0]}; Output: {np.argmax(cls_out)}")
-        plt.savefig(
-            "plot/lines.png"
+        cm = confusion_matrix(
+            y_true=cls_target,
+            y_pred=cls_output
         )
-        plt.show()
+        vis.plot_confusion_matrix(
+            cm,
+            target_names=[*range(0, 25)],
+            normalize=False,
+            export_name="plot/confusion_matrix.png"
+        )
 
 
 if __name__ == '__main__':

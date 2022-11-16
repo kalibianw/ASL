@@ -8,6 +8,8 @@ from torchvision import transforms
 import torch
 import torch.nn as nn
 
+import numpy as np
+
 import matplotlib.pyplot as plt
 import os
 
@@ -40,11 +42,35 @@ def main():
     vis = Visualization(cfg=cfg)
     vis.multiple_joint_heatmap_visualization(
         heatmaps_tensor=stacked_heatmaps,
+        title="Ground Truth Heatmap",
         export_fig_name="plot/GT Heatmap"
     )
 
-    print(y_label[0])
-    plt.imshow(x[0][0].cpu().numpy())
+    img = x[0].cpu().numpy()
+    img = np.transpose(img, (1, 2, 0))
+    img = img.astype(np.uint8).copy()
+
+    plt.imshow(img)
+    plt.title("Original")
+    plt.tight_layout()
+    plt.savefig(
+        "plot/Original Image.png",
+        dpi=300
+    )
+    plt.show()
+
+    img = vis.draw_line(
+        img,
+        lndmrk=y_lndmrk[0].cpu().numpy(),
+        color=(255, 255, 255)
+    )
+    plt.imshow(img)
+    plt.title(f"Skeleton")
+    plt.tight_layout()
+    plt.savefig(
+        "plot/GT Skeleton.png",
+        dpi=300
+    )
     plt.show()
 
 
