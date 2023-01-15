@@ -48,7 +48,9 @@ def main():
             model = convert(onnx_model)
         elif model_ext == "pt":
             print("Detect the pt model")
-            model = torch.load(model_path)
+            weight = torch.load(model_path)
+            model = Model(cfg=cfg)
+            model.load_state_dict(weight)
         else:
             raise ModelTypeError
         summary(
