@@ -81,7 +81,7 @@ def main():
         vis.plot_confusion_matrix(
             cm,
             target_names=[*range(0, 25)],
-            normalize=False,
+            normalize=True,
             export_name="plot/confusion_matrix.png"
         )
 
